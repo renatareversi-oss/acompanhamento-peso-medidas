@@ -57,6 +57,32 @@ export function bmi(weightKg: number | undefined, heightCm: number | undefined):
   return round1(weightKg / (heightM * heightM));
 }
 
+export interface GoalProgress {
+  percent: number;
+  reached: boolean;
+}
+
+export function goalProgress(participant: Participant): GoalProgress | undefined {
+  const entries = sortedEntries(participant).filter((e) => e.weightKg != null);
+  if (entries.length === 0 || participant.goalWeightKg == null) return undefined;
+
+  const start = entries[0].weightKg as number;
+  const current = entries[entries.length - 1].weightKg as number;
+  const goal = participant.goalWeightKg;
+  const totalDistance = start - goal;
+
+  if (totalDistance === 0) {
+    return { percent: current === goal ? 100 : 0, reached: current === goal };
+  }
+
+  const doneDistance = start - current;
+  const rawPercent = (doneDistance / totalDistance) * 100;
+  const percent = Math.min(100, Math.max(0, round1(rawPercent)));
+  const reached = totalDistance > 0 ? current <= goal : current >= goal;
+
+  return { percent: reached ? 100 : percent, reached };
+}
+
 export function bmiLabel(value: number | undefined): string {
   if (value == null) return '';
   if (value < 18.5) return 'Abaixo do peso';
