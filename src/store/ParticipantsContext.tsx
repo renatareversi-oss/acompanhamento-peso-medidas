@@ -25,6 +25,7 @@ interface NewParticipantInput {
   name: string;
   emoji: string;
   color: string;
+  photo?: string;
   heightCm?: number;
   goalWeightKg?: number;
 }
@@ -63,6 +64,7 @@ export function ParticipantsProvider({ children }: { children: ReactNode }) {
         name: input.name.trim(),
         emoji: input.emoji,
         color: input.color,
+        photo: input.photo,
         heightCm: input.heightCm,
         goalWeightKg: input.goalWeightKg,
         createdAt: new Date().toISOString(),

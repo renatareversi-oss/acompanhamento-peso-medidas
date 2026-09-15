@@ -15,6 +15,7 @@ export interface Participant {
   name: string;
   emoji: string;
   color: string; // key into AVATAR_COLORS
+  photo?: string; // compressed data URL, takes priority over emoji when present
   heightCm?: number;
   goalWeightKg?: number;
   createdAt: string; // ISO datetime

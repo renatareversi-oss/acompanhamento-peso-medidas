@@ -4,6 +4,7 @@ import { useParticipants } from '../store/ParticipantsContext';
 import { Avatar } from '../components/Avatar';
 import { MeasurementChart } from '../components/MeasurementChart';
 import { GoalProgressBar } from '../components/GoalProgressBar';
+import { GoalCelebration } from '../components/GoalCelebration';
 import { ParticipantFormModal } from '../components/ParticipantFormModal';
 import { EntryFormModal } from '../components/EntryFormModal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -77,10 +78,11 @@ export function Profile() {
         ← Todos os participantes
       </button>
 
-      <div className="bg-[var(--color-surface)]/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-[var(--color-border)] animate-pop-in">
+      <div className="relative bg-[var(--color-surface)]/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-[var(--color-border)] animate-pop-in">
+        {progress?.reached && <GoalCelebration />}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div className="flex items-center gap-4">
-            <Avatar emoji={participant.emoji} color={participant.color} size="lg" />
+            <Avatar emoji={participant.emoji} color={participant.color} photo={participant.photo} size="lg" />
             <div>
               <h1 className="font-heading text-2xl font-extrabold" style={{ color: palette.text }}>
                 {participant.name}

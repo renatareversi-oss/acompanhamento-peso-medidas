@@ -17,7 +17,7 @@ export function ParticipantCard({ participant }: { participant: Participant }) {
     >
       <div className="flex items-center gap-4">
         <div className="transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
-          <Avatar emoji={participant.emoji} color={participant.color} size="md" />
+          <Avatar emoji={participant.emoji} color={participant.color} photo={participant.photo} size="md" />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-heading text-lg font-bold truncate" style={{ color: palette.text }}>
