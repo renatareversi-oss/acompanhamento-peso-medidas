@@ -2,12 +2,23 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useParticipants } from '../store/ParticipantsContext';
 import { Avatar } from '../components/Avatar';
-import { WeightChart } from '../components/WeightChart';
+import { MeasurementChart } from '../components/MeasurementChart';
+import { GoalProgressBar } from '../components/GoalProgressBar';
 import { ParticipantFormModal } from '../components/ParticipantFormModal';
 import { EntryFormModal } from '../components/EntryFormModal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { AVATAR_COLORS } from '../lib/constants';
-import { bmi, bmiLabel, formatCm, formatDate, formatWeight, latestEntry, sortedEntries, weightDelta } from '../lib/utils';
+import {
+  bmi,
+  bmiLabel,
+  formatCm,
+  formatDate,
+  formatWeight,
+  goalProgress,
+  latestEntry,
+  sortedEntries,
+  weightDelta,
+} from '../lib/utils';
 import type { MeasurementEntry } from '../types';
 
 const measureFields: { key: keyof MeasurementEntry; label: string; icon: string }[] = [
@@ -55,6 +66,7 @@ export function Profile() {
     participant.goalWeightKg != null && last?.weightKg != null
       ? Math.round((last.weightKg - participant.goalWeightKg) * 10) / 10
       : undefined;
+  const progress = goalProgress(participant);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
@@ -65,7 +77,7 @@ export function Profile() {
         ← Todos os participantes
       </button>
 
-      <div className="bg-white/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-white animate-pop-in">
+      <div className="bg-[var(--color-surface)]/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-[var(--color-border)] animate-pop-in">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div className="flex items-center gap-4">
             <Avatar emoji={participant.emoji} color={participant.color} size="lg" />
@@ -82,13 +94,13 @@ export function Profile() {
           <div className="flex gap-2 shrink-0">
             <button
               onClick={() => setShowEditParticipant(true)}
-              className="rounded-xl bg-[#fff1f6] text-[#c23764] font-semibold text-sm px-3.5 py-2 hover:bg-[#ffd6e3] transition-colors"
+              className="rounded-xl bg-[#fff1f6] text-[#c23764] font-semibold text-sm px-3.5 py-2 hover:bg-[#ffd6e3] dark:bg-white/10 dark:text-[#ff9dbb] dark:hover:bg-white/20 transition-colors"
             >
               ✏️ Editar
             </button>
             <button
               onClick={() => setShowDeleteParticipant(true)}
-              className="rounded-xl bg-[#fdeceb] text-[#c23764] font-semibold text-sm px-3.5 py-2 hover:bg-[#fadbd8] transition-colors"
+              className="rounded-xl bg-[#fdeceb] text-[#c23764] font-semibold text-sm px-3.5 py-2 hover:bg-[#fadbd8] dark:bg-white/10 dark:text-[#ff9dbb] dark:hover:bg-white/20 transition-colors"
             >
               🗑️
             </button>
@@ -109,14 +121,16 @@ export function Profile() {
             value={remainingToGoal == null ? '—' : remainingToGoal <= 0 ? 'Meta atingida! 🎉' : `${remainingToGoal} kg`}
           />
         </div>
+
+        {progress && <GoalProgressBar progress={progress} chartColor={palette.chart} />}
       </div>
 
-      <div className="bg-white/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-white mt-5 animate-pop-in">
-        <h2 className="font-heading text-lg font-bold mb-1">Evolução do peso</h2>
-        <WeightChart entries={entries} color={participant.color} />
+      <div className="bg-[var(--color-surface)]/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-[var(--color-border)] mt-5 animate-pop-in">
+        <h2 className="font-heading text-lg font-bold mb-1">Evolução</h2>
+        <MeasurementChart entries={entries} color={participant.color} />
       </div>
 
-      <div className="bg-white/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-white mt-5 animate-pop-in">
+      <div className="bg-[var(--color-surface)]/80 backdrop-blur rounded-3xl p-6 shadow-sm border border-[var(--color-border)] mt-5 animate-pop-in">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-lg font-bold">Registros</h2>
           <button
@@ -136,7 +150,7 @@ export function Profile() {
             {[...entries].reverse().map((entry) => (
               <li
                 key={entry.id}
-                className="rounded-2xl border border-[#f5e4ea] p-3.5 hover:border-[#ffc4d6] transition-colors"
+                className="rounded-2xl border border-[var(--color-border)] p-3.5 hover:border-[#ffc4d6] dark:hover:border-[#ff8fab]/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -152,14 +166,14 @@ export function Profile() {
                     <button
                       onClick={() => setEditingEntry(entry)}
                       aria-label="Editar registro"
-                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#fff1f6] text-sm"
+                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#fff1f6] dark:hover:bg-white/10 text-sm"
                     >
                       ✏️
                     </button>
                     <button
                       onClick={() => setDeletingEntryId(entry.id)}
                       aria-label="Excluir registro"
-                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#fdeceb] text-sm"
+                      className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#fdeceb] dark:hover:bg-white/10 text-sm"
                     >
                       🗑️
                     </button>
@@ -256,11 +270,15 @@ function StatBox({
   negative?: boolean;
 }) {
   return (
-    <div className="rounded-2xl bg-[#fff8fb] p-3 text-center">
+    <div className="rounded-2xl bg-[var(--color-surface-soft)] p-3 text-center">
       <p className="text-[11px] uppercase tracking-wide font-semibold text-[var(--color-text-soft)]">{label}</p>
       <p
         className={`font-heading font-bold text-lg mt-0.5 ${
-          positive ? 'text-[#1d7a5f]' : negative ? 'text-[#c23764]' : 'text-[var(--color-text)]'
+          positive
+            ? 'text-[#1d7a5f] dark:text-[#7fe0b8]'
+            : negative
+              ? 'text-[#c23764] dark:text-[#ff9dbb]'
+              : 'text-[var(--color-text)]'
         }`}
       >
         {value}

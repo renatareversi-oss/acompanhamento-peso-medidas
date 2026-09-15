@@ -14,7 +14,7 @@ export function Modal({ title, emoji, onClose, children }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md max-h-[92vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 animate-pop-in"
+        className="w-full sm:max-w-md max-h-[92vh] overflow-y-auto bg-[var(--color-surface)] rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 animate-pop-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -25,7 +25,7 @@ export function Modal({ title, emoji, onClose, children }: ModalProps) {
           <button
             onClick={onClose}
             aria-label="Fechar"
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#fff1f6] text-[#c23764] hover:bg-[#ffd6e3] transition-colors text-lg font-bold"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#fff1f6] text-[#c23764] hover:bg-[#ffd6e3] dark:bg-white/10 dark:text-[#ff9dbb] dark:hover:bg-white/20 transition-colors text-lg font-bold"
           >
             ×
           </button>

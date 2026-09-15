@@ -58,7 +58,7 @@ export function EntryFormModal({ onClose, onSubmit, initial }: EntryFormModalPro
             value={date}
             max={todayIso()}
             onChange={(e) => setDate(e.target.value)}
-            className="mt-1 w-full rounded-2xl border border-[#f0d9e2] bg-[#fffafc] px-4 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] transition"
+            className="mt-1 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] text-[var(--color-text)] px-4 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
           />
         </div>
 
@@ -78,7 +78,7 @@ export function EntryFormModal({ onClose, onSubmit, initial }: EntryFormModalPro
                   setError('');
                 }}
                 placeholder="—"
-                className="mt-1 w-full rounded-2xl border border-[#f0d9e2] bg-[#fffafc] px-3 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] transition"
+                className="mt-1 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] text-[var(--color-text)] px-3 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
               />
             </div>
           ))}
@@ -90,7 +90,7 @@ export function EntryFormModal({ onClose, onSubmit, initial }: EntryFormModalPro
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Opcional"
-            className="mt-1 w-full rounded-2xl border border-[#f0d9e2] bg-[#fffafc] px-4 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] transition"
+            className="mt-1 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] text-[var(--color-text)] px-4 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
           />
         </div>
 

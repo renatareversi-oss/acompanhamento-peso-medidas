@@ -56,7 +56,7 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
               setError('');
             }}
             placeholder="Ex: Renata"
-            className="mt-1 w-full rounded-2xl border border-[#f0d9e2] bg-[#fffafc] px-4 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] transition"
+            className="mt-1 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] text-[var(--color-text)] px-4 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
           />
           {error && <p className="text-xs text-[#e6486a] mt-1">{error}</p>}
         </div>
@@ -108,7 +108,7 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
               value={heightCm}
               onChange={(e) => setHeightCm(e.target.value)}
               placeholder="Opcional"
-              className="mt-1 w-full rounded-2xl border border-[#f0d9e2] bg-[#fffafc] px-3 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] transition"
+              className="mt-1 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] text-[var(--color-text)] px-3 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
             />
           </div>
           <div>
@@ -119,7 +119,7 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
               value={goalWeightKg}
               onChange={(e) => setGoalWeightKg(e.target.value)}
               placeholder="Opcional"
-              className="mt-1 w-full rounded-2xl border border-[#f0d9e2] bg-[#fffafc] px-3 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] transition"
+              className="mt-1 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] text-[var(--color-text)] px-3 py-2.5 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
             />
           </div>
         </div>
