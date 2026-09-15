@@ -1,11 +1,19 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Modal } from './Modal';
 import { AVATAR_COLOR_KEYS, AVATAR_COLORS, AVATAR_EMOJIS } from '../lib/constants';
+import { readAndCompressImage } from '../lib/image';
 import type { Participant } from '../types';
 
 interface ParticipantFormModalProps {
   onClose: () => void;
-  onSubmit: (data: { name: string; emoji: string; color: string; heightCm?: number; goalWeightKg?: number }) => void;
+  onSubmit: (data: {
+    name: string;
+    emoji: string;
+    color: string;
+    photo?: string;
+    heightCm?: number;
+    goalWeightKg?: number;
+  }) => void;
   initial?: Participant;
 }
 
@@ -13,9 +21,12 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
   const [name, setName] = useState(initial?.name ?? '');
   const [emoji, setEmoji] = useState(initial?.emoji ?? AVATAR_EMOJIS[0]);
   const [color, setColor] = useState(initial?.color ?? AVATAR_COLOR_KEYS[0]);
+  const [photo, setPhoto] = useState<string | undefined>(initial?.photo);
   const [heightCm, setHeightCm] = useState(initial?.heightCm?.toString() ?? '');
   const [goalWeightKg, setGoalWeightKg] = useState(initial?.goalWeightKg?.toString() ?? '');
   const [error, setError] = useState('');
+  const [photoError, setPhotoError] = useState('');
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,9 +38,23 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
       name: name.trim(),
       emoji,
       color,
+      photo,
       heightCm: heightCm ? Number(heightCm) : undefined,
       goalWeightKg: goalWeightKg ? Number(goalWeightKg) : undefined,
     });
+  }
+
+  async function handlePhotoChosen(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const compressed = await readAndCompressImage(file);
+      setPhoto(compressed);
+      setPhotoError('');
+    } catch {
+      setPhotoError('Não foi possível usar essa imagem.');
+    }
   }
 
   const palette = AVATAR_COLORS[color];
@@ -37,13 +62,49 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
   return (
     <Modal title={initial ? 'Editar participante' : 'Novo participante'} emoji="✨" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex justify-center">
-          <div
-            className="w-20 h-20 flex items-center justify-center rounded-full text-4xl border-4"
+        <div className="flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={() => photoInputRef.current?.click()}
+            className="relative w-20 h-20 rounded-full text-4xl border-4 overflow-hidden group"
             style={{ backgroundColor: palette.bg, borderColor: palette.ring }}
+            aria-label="Escolher foto"
           >
-            {emoji}
+            {photo ? (
+              <img src={photo} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <span className="w-full h-full flex items-center justify-center">{emoji}</span>
+            )}
+            <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white text-xl">
+              📷
+            </span>
+          </button>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChosen}
+            className="hidden"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => photoInputRef.current?.click()}
+              className="text-xs font-semibold text-[var(--color-primary-dark)] hover:underline"
+            >
+              {photo ? 'Trocar foto' : 'Adicionar foto'}
+            </button>
+            {photo && (
+              <button
+                type="button"
+                onClick={() => setPhoto(undefined)}
+                className="text-xs font-semibold text-[var(--color-text-soft)] hover:underline"
+              >
+                Remover
+              </button>
+            )}
           </div>
+          {photoError && <p className="text-xs text-[#e6486a]">{photoError}</p>}
         </div>
 
         <div>
@@ -62,7 +123,9 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
         </div>
 
         <div>
-          <label className="text-sm font-semibold text-[var(--color-text-soft)]">Avatar</label>
+          <label className="text-sm font-semibold text-[var(--color-text-soft)]">
+            Avatar {photo && <span className="font-normal">(usado se remover a foto)</span>}
+          </label>
           <div className="mt-1 grid grid-cols-8 gap-1.5">
             {AVATAR_EMOJIS.map((e) => (
               <button

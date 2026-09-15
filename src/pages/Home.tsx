@@ -1,9 +1,22 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useParticipants } from '../store/ParticipantsContext';
 import { ParticipantCard } from '../components/ParticipantCard';
 import { ParticipantFormModal } from '../components/ParticipantFormModal';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { latestEntry } from '../lib/utils';
 import type { Participant } from '../types';
+
+type SortOption = 'recent' | 'name' | 'newest';
+
+const SORT_LABELS: Record<SortOption, string> = {
+  recent: 'Atualizado recentemente',
+  name: 'Nome (A-Z)',
+  newest: 'Adicionado recentemente',
+};
+
+function lastActivityDate(participant: Participant): string {
+  return latestEntry(participant)?.date ?? participant.createdAt.slice(0, 10);
+}
 
 function isValidParticipantList(value: unknown): value is Participant[] {
   return (
@@ -24,7 +37,24 @@ export function Home() {
   const [showAdd, setShowAdd] = useState(false);
   const [pendingImport, setPendingImport] = useState<Participant[] | null>(null);
   const [importError, setImportError] = useState('');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('recent');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const visibleParticipants = useMemo(() => {
+    const filtered = search.trim()
+      ? participants.filter((p) => p.name.toLowerCase().includes(search.trim().toLowerCase()))
+      : participants;
+    const sorted = [...filtered];
+    if (sortBy === 'name') {
+      sorted.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+    } else if (sortBy === 'newest') {
+      sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    } else {
+      sorted.sort((a, b) => lastActivityDate(b).localeCompare(lastActivityDate(a)));
+    }
+    return sorted;
+  }, [participants, search, sortBy]);
 
   function handleExport() {
     const blob = new Blob([JSON.stringify(participants, null, 2)], { type: 'application/json' });
@@ -105,18 +135,48 @@ export function Home() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {participants.map((p) => (
-            <ParticipantCard key={p.id} participant={p} />
-          ))}
-          <button
-            onClick={() => setShowAdd(true)}
-            className="flex flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-[#ffb6c9] text-[var(--color-primary-dark)] hover:bg-[var(--color-surface)]/60 transition-colors min-h-[132px] font-heading font-bold animate-pop-in"
-          >
-            <span className="text-3xl">+</span>
-            Adicionar participante
-          </button>
-        </div>
+        <>
+          {participants.length > 1 && (
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="🔎 Buscar participante..."
+                className="flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-4 py-2.5 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
+              />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-3 py-2.5 text-sm outline-none focus:border-[var(--color-primary)] transition"
+              >
+                {(Object.keys(SORT_LABELS) as SortOption[]).map((opt) => (
+                  <option key={opt} value={opt}>
+                    {SORT_LABELS[opt]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {visibleParticipants.length === 0 ? (
+            <p className="text-center text-[var(--color-text-soft)] py-10">
+              Nenhum participante encontrado para "{search}".
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {visibleParticipants.map((p) => (
+                <ParticipantCard key={p.id} participant={p} />
+              ))}
+              <button
+                onClick={() => setShowAdd(true)}
+                className="flex flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-[#ffb6c9] text-[var(--color-primary-dark)] hover:bg-[var(--color-surface)]/60 transition-colors min-h-[132px] font-heading font-bold animate-pop-in"
+              >
+                <span className="text-3xl">+</span>
+                Adicionar participante
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {showAdd && (
