@@ -25,6 +25,7 @@ interface NewParticipantInput {
   name: string;
   emoji: string;
   color: string;
+  photo?: string;
   heightCm?: number;
   goalWeightKg?: number;
 }
@@ -38,6 +39,7 @@ interface ParticipantsContextValue {
   addEntry: (participantId: string, entry: Omit<MeasurementEntry, 'id'>) => void;
   updateEntry: (participantId: string, entryId: string, patch: Partial<Omit<MeasurementEntry, 'id'>>) => void;
   deleteEntry: (participantId: string, entryId: string) => void;
+  importAll: (participants: Participant[]) => void;
 }
 
 const ParticipantsContext = createContext<ParticipantsContextValue | null>(null);
@@ -62,6 +64,7 @@ export function ParticipantsProvider({ children }: { children: ReactNode }) {
         name: input.name.trim(),
         emoji: input.emoji,
         color: input.color,
+        photo: input.photo,
         heightCm: input.heightCm,
         goalWeightKg: input.goalWeightKg,
         createdAt: new Date().toISOString(),
@@ -101,6 +104,9 @@ export function ParticipantsProvider({ children }: { children: ReactNode }) {
       setParticipants((prev) =>
         prev.map((p) => (p.id === participantId ? { ...p, entries: p.entries.filter((e) => e.id !== entryId) } : p)),
       );
+    },
+    importAll: (imported) => {
+      setParticipants(imported);
     },
   }), [participants]);
 
