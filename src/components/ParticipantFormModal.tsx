@@ -124,7 +124,7 @@ export function ParticipantFormModal({ onClose, onSubmit, initial }: Participant
 
         <div>
           <label className="text-sm font-semibold text-[var(--color-text-soft)]">
-            Avatar {photo && <span className="font-normal">(usado se remover a foto)</span>}
+            Avatar {photo && <span className="font-normal">· aparece se você tirar a foto</span>}
           </label>
           <div className="mt-1 grid grid-cols-8 gap-1.5">
             {AVATAR_EMOJIS.map((e) => (

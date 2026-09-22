@@ -90,14 +90,12 @@ export function Home() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <header className="text-center mb-10">
-        <p className="text-sm font-semibold text-[var(--color-primary-dark)] tracking-wide uppercase">
-          bem-vinda de volta
-        </p>
+        <p className="text-sm font-semibold text-[var(--color-primary-dark)]">bem-vinda de volta</p>
         <h1 className="font-heading text-3xl sm:text-4xl font-extrabold mt-1 flex items-center justify-center gap-2">
-          <span>💗</span> Acompanhamento de Peso &amp; Medidas
+          <span>💗</span> Peso &amp; medidas
         </h1>
         <p className="text-[var(--color-text-soft)] mt-2 max-w-md mx-auto">
-          Acompanhe a evolução de cada participante com carinho, de um jeitinho fofo e simples.
+          Registre o peso e as medidas de cada pessoa e veja a evolução ao longo do tempo.
         </p>
 
         <div className="flex items-center justify-center gap-2 mt-4">
@@ -123,10 +121,8 @@ export function Home() {
       {participants.length === 0 ? (
         <div className="text-center bg-[var(--color-surface)]/70 backdrop-blur rounded-3xl p-10 border border-[var(--color-border)] shadow-sm animate-pop-in">
           <div className="text-5xl mb-3">🌸</div>
-          <h2 className="font-heading text-xl font-bold">Nenhum participante ainda</h2>
-          <p className="text-[var(--color-text-soft)] mt-1 mb-5">
-            Adicione a primeira pessoa para começar a acompanhar o progresso.
-          </p>
+          <h2 className="font-heading text-xl font-bold">Ainda não tem ninguém aqui</h2>
+          <p className="text-[var(--color-text-soft)] mt-1 mb-5">Adicione a primeira pessoa pra começar.</p>
           <button
             onClick={() => setShowAdd(true)}
             className="rounded-2xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-heading font-bold px-6 py-3 shadow-lg shadow-pink-200 transition-colors"
@@ -141,7 +137,7 @@ export function Home() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="🔎 Buscar participante..."
+                placeholder="Buscar pelo nome..."
                 className="flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/80 px-4 py-2.5 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[#ffd6e3] dark:focus:ring-[#ff8fab]/30 transition"
               />
               <select
@@ -159,9 +155,7 @@ export function Home() {
           )}
 
           {visibleParticipants.length === 0 ? (
-            <p className="text-center text-[var(--color-text-soft)] py-10">
-              Nenhum participante encontrado para "{search}".
-            </p>
+            <p className="text-center text-[var(--color-text-soft)] py-10">Não achei ninguém com esse nome.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {visibleParticipants.map((p) => (
@@ -192,7 +186,7 @@ export function Home() {
       {pendingImport && (
         <ConfirmDialog
           title="Importar backup?"
-          message={`Isso vai substituir os dados atuais por ${pendingImport.length} participante(s) do arquivo importado. Essa ação não pode ser desfeita.`}
+          message={`Isso substitui os dados atuais pelos ${pendingImport.length} participante(s) desse arquivo. Não dá pra desfazer.`}
           confirmLabel="Importar"
           onCancel={() => setPendingImport(null)}
           onConfirm={() => {

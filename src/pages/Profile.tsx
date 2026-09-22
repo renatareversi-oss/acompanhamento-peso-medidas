@@ -110,17 +110,17 @@ export function Profile() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
-          <StatBox label="Peso atual" value={formatWeight(last?.weightKg)} />
+          <StatBox label="Peso agora" value={formatWeight(last?.weightKg)} />
           <StatBox
-            label="Variação"
-            value={delta == null ? '—' : delta === 0 ? 'estável' : `${delta > 0 ? '+' : ''}${delta} kg`}
+            label="Desde a última"
+            value={delta == null ? '—' : delta === 0 ? 'sem mudança' : `${delta > 0 ? '+' : ''}${delta} kg`}
             positive={delta != null && delta < 0}
             negative={delta != null && delta > 0}
           />
           <StatBox label="IMC" value={currentBmi != null ? `${currentBmi}` : '—'} sub={bmiLabel(currentBmi)} />
           <StatBox
-            label="Para a meta"
-            value={remainingToGoal == null ? '—' : remainingToGoal <= 0 ? 'Meta atingida! 🎉' : `${remainingToGoal} kg`}
+            label="Falta pra meta"
+            value={remainingToGoal == null ? '—' : remainingToGoal <= 0 ? 'Chegou! 🎉' : `${remainingToGoal} kg`}
           />
         </div>
 
@@ -145,7 +145,7 @@ export function Profile() {
 
         {entries.length === 0 ? (
           <p className="text-center text-[var(--color-text-soft)] py-8">
-            Nenhum registro ainda. Adicione a primeira medição de {participant.name}!
+            Ainda não tem nada por aqui. Bora registrar a primeira medição de {participant.name}?
           </p>
         ) : (
           <ul className="space-y-2">
@@ -213,7 +213,7 @@ export function Profile() {
       {showDeleteParticipant && (
         <ConfirmDialog
           title={`Remover ${participant.name}?`}
-          message="Todos os registros desse participante serão apagados. Essa ação não pode ser desfeita."
+          message="Isso apaga o perfil e todos os registros dele. Não tem como desfazer depois."
           onCancel={() => setShowDeleteParticipant(false)}
           onConfirm={() => {
             deleteParticipant(participant.id);
@@ -246,7 +246,7 @@ export function Profile() {
       {deletingEntryId && (
         <ConfirmDialog
           title="Remover este registro?"
-          message="Essa medição será apagada permanentemente."
+          message="Essa medição some pra sempre. Não tem como desfazer."
           onCancel={() => setDeletingEntryId(null)}
           onConfirm={() => {
             deleteEntry(participant.id, deletingEntryId);
@@ -273,7 +273,7 @@ function StatBox({
 }) {
   return (
     <div className="rounded-2xl bg-[var(--color-surface-soft)] p-3 text-center">
-      <p className="text-[11px] uppercase tracking-wide font-semibold text-[var(--color-text-soft)]">{label}</p>
+      <p className="text-[11px] font-semibold text-[var(--color-text-soft)]">{label}</p>
       <p
         className={`font-heading font-bold text-lg mt-0.5 ${
           positive

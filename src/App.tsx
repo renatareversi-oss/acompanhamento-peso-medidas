@@ -2,6 +2,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { ParticipantsProvider } from './store/ParticipantsContext';
 import { ThemeProvider } from './store/ThemeContext';
 import { ThemeToggle } from './components/ThemeToggle';
+import { OrganicBackdrop } from './components/OrganicBackdrop';
 import { Home } from './pages/Home';
 import { Profile } from './pages/Profile';
 
@@ -10,6 +11,7 @@ function App() {
     <ThemeProvider>
       <ParticipantsProvider>
         <HashRouter>
+          <OrganicBackdrop />
           <ThemeToggle />
           <Routes>
             <Route path="/" element={<Home />} />

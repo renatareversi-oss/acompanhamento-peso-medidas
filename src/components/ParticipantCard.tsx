@@ -24,9 +24,9 @@ export function ParticipantCard({ participant }: { participant: Participant }) {
             {participant.name}
           </h3>
           {last ? (
-            <p className="text-xs text-[var(--color-text-soft)]">Atualizado em {formatDate(last.date)}</p>
+            <p className="text-xs text-[var(--color-text-soft)]">Atualizado {formatDate(last.date)}</p>
           ) : (
-            <p className="text-xs text-[var(--color-text-soft)]">Nenhum registro ainda</p>
+            <p className="text-xs text-[var(--color-text-soft)]">Sem registros ainda</p>
           )}
         </div>
       </div>
